@@ -1,0 +1,10 @@
+---
+- hosts: all
+  tasks:
+    - name: copy StaleSession216 Script file from work station to remote stitcher node
+      copy:
+        src: StaleSession216.sh 
+        dest: /etc/cron.hourly/
+        owner: root
+        group: root
+        mode: 0755

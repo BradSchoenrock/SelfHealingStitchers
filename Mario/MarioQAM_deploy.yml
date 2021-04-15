@@ -1,0 +1,26 @@
+---
+- hosts: all
+  tasks:
+    - name: copy Mario Script file from work station to remote stitcher node
+      copy:
+        src: MarioQAM.sh 
+        dest: /root
+        owner: root
+        group: root
+        mode: 0755
+
+    - name: Ensure we have Name added to MarioQAM crontab entry if already exist
+      ansible.builtin.lineinfile:
+        dest: /var/spool/cron/root
+        state: absent
+        regexp: '^#Ansible":" Self healing script Mario'
+        insertbefore: .MarioQAM. 
+        line: '#Ansible: Self healing script Mario' 
+
+    - name: Add crontab for self healing script Mario
+      cron:
+        name: "Self healing script Mario"
+        minute: "*/10"
+        hour :  "*"
+        user : root
+        job: "bash /root/MarioQAM.sh"

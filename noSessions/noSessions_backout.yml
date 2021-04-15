@@ -1,0 +1,18 @@
+---
+- hosts: all
+  tasks:
+    - name: Restore the original cronjob file on stitcher
+      copy:
+        src: /var/spool/cron/root_backup
+        dest: /var/spool/cron/root
+        remote_src: yes
+
+    - name: Remove cronjob backup file
+      file:
+        path: /var/spool/cron/root_backup
+        state: absent
+
+    - name: Remove noSessions.sh script 
+      file:
+        path: /root/noSessions.sh
+        state: absent

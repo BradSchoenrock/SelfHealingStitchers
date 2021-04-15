@@ -1,0 +1,32 @@
+---
+- hosts: all
+  tasks:
+    - name: Backup the cronjob file on stitcher
+      copy:
+        src: /var/spool/cron/root
+        dest: /var/spool/cron/root_backup
+        remote_src: yes
+
+    - name: Copy script file from work station to remote stitcher node
+      copy:
+        src: noSessions.sh
+        dest: /root
+        owner: root
+        group: root
+        mode: 0755
+
+    - name: Ensure we have Name added to noSessions crontab entry
+      ansible.builtin.lineinfile:
+        dest: /var/spool/cron/root
+        state: absent
+        regexp: '^#Ansible":" Self healing script no Sessions'
+        insertbefore: .noSessions. 
+        line: '#Ansible: Self healing script no Sessions' 
+
+    - name: Add crontab for self healing script no Sessions
+      cron: 
+        name: "Self healing script no Sessions" 
+        minute: "9,19,29,39,49,59" 
+        hour :  "*" 
+        user : root 
+        job: "bash /root/noSessions.sh"
